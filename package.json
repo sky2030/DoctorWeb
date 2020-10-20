@@ -7,7 +7,11 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
+    "moment-timezone": "^0.5.31",
+    "rc-time-picker": "^3.7.3",
     "react": "^16.13.1",
+    "react-calendar-icon": "^0.9.4",
+    "react-datepicker": "^3.2.2",
     "react-dom": "^16.13.1",
     "react-icons": "^3.11.0",
     "react-router-dom": "^5.2.0",
@@ -34,5 +38,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://mconnecthealth.com:2000"
+  "proxy": "https://stage.mconnecthealth.com"
 }

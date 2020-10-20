@@ -37,7 +37,7 @@ class Nav extends React.Component {
             </li>
             {/* <li><Link to='/Login'><i className="fas fa-user-lock"></i>Logout</Link></li> */}
             <li>
-              <Link to="/splash">
+              <Link to="/">
                 <i className="fas fa-user-lock"></i>Logout
               </Link>
             </li>
