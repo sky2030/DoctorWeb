@@ -19,6 +19,8 @@ class Login extends React.Component {
       password: "",
       token: "",
       LoggedIn,
+      emailError: "",
+      passwordError: "",
     };
   }
 
@@ -66,16 +68,23 @@ class Login extends React.Component {
         .then(async (response) => {
           const data = response.data.data.token;
           console.log(response);
-          try {
-            localStorage.setItem("token", data);
-            await this.setState({
-              token: localStorage.getItem("token"),
-            });
-          } catch (e) {
-            console.log("Something went wrong with sky's Code", e);
+          if (response.data.code === 200) {
+            try {
+              localStorage.setItem("token", data);
+              await this.setState({
+                token: localStorage.getItem("token"),
+              });
+            } catch (e) {
+              alert(e + response.message)
+              console.log("Something went wrong with sky's Code", e);
+            }
+          } else {
+            alert(response.data.message)
           }
         })
-        .catch(() => {
+        .catch((error) => {
+          alert(error);
+          alert(Error + " Server Not Responding")
           console.log("internal server error");
         });
     }
@@ -115,25 +124,35 @@ class Login extends React.Component {
         <form autocomplete="off" onSubmit={this.submitForm}>
           <div className="loginbox">
             <i className="fas fa-user"></i>
-            <input
-              placeholder="Your User Name"
-              type="text"
-              id="email"
-              name="email"
-              value={this.state.email}
-              onChange={this.onChange}
-            ></input>
+            <div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.emailError}
+              </div>
+              <input
+                placeholder="Your User Name"
+                type="text"
+                id="email"
+                name="email"
+                value={this.state.email}
+                onChange={this.onChange}
+              ></input>
+            </div>
           </div>
           <div className="loginbox">
             <i className="fas fa-lock"></i>
-            <input
-              placeholder="Your Password"
-              type="password"
-              id="password"
-              name="password"
-              value={this.state.password}
-              onChange={this.onChange}
-            ></input>
+            <div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.passwordError}
+              </div>
+              <input
+                placeholder="Your Password"
+                type="password"
+                id="password"
+                name="password"
+                value={this.state.password}
+                onChange={this.onChange}
+              ></input>
+            </div>
             <a href="confirm" className="forgotpass">
               Forgot Password ?
             </a>

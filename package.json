@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
     "moment-timezone": "^0.5.31",
+    "pagination": "github:react-bootstrap/Pagination",
     "rc-time-picker": "^3.7.3",
     "react": "^16.13.1",
     "react-calendar-icon": "^0.9.4",

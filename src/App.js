@@ -14,6 +14,8 @@ import Myprofile from "./DoctorProfile";
 import splash from "./splash";
 import Prescription from "./PrescriptionForm";
 import Reports from "./Reports";
+import EnxConferenceScreen from "./EnxConferenceScreen"
+import PrivacyPage from './PrivacyPage'
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
           <Route path="/Myprofile" component={Myprofile} />
           <Route path="/Prescription" component={Prescription} />
           <Route path="/Reports" component={Reports} />
+          <Route path="/EnableX" component={EnxConferenceScreen} />
+          <Route path="/PrivacyPage" component={PrivacyPage} />
         </Switch>
       </div>
       <Footer />

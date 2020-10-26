@@ -13,10 +13,15 @@ class Alltransation extends React.Component {
     super(props);
     this.state = {
       posts: [],
+      dup_post: [],
+      hospital: [],
+
+
     };
   }
 
   componentDidMount = () => {
+    this.setState({ hospital: [] })
     this.GetTransactions();
   };
 
@@ -29,14 +34,67 @@ class Alltransation extends React.Component {
       })
       .then((response) => {
         console.log(response);
-        const data = response.data.data;
-        this.setState({ posts: data });
-        console.log("Data has been received!!" + data);
+        if (response.data.code === 200) {
+          const data = response.data.data;
+          let dup_hospitals = [
+            JSON.stringify({
+              _id: "allhospital",
+              name: "All Hospital",
+            })];
+
+
+          response.data.data.map(item => {
+            let jsonOBJ = {
+              _id: item.hospital_id,
+              name: item.hospital_name
+            }
+            let objString = JSON.stringify(jsonOBJ)
+            let index = dup_hospitals.indexOf(objString)
+
+            if (index === -1) {
+              console.log("Push :", index)
+              dup_hospitals.push(objString)
+            }
+
+
+          })
+          this.setState({
+            hospital: dup_hospitals,
+            posts: data,
+            dup_post: data
+          })
+          //   console.log("Data has been received!!" + data);
+        } else {
+          alert(response.data.message)
+          this.setState({
+            posts: [],
+            dup_post: [],
+            hospital: [],
+
+          });
+        }
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((error) => {
+        alert(error);
       });
   };
+
+  handleStatus = (e) => {
+    console.log("This is status: ", e.target.value);
+    if (e.target.value === "status") {
+      this.setState({
+        posts: this.state.dup_post
+      })
+    } else {
+      let filterList = this.state.dup_post.filter(item => {
+        if (item.status === e.target.value) {
+          return item
+        }
+      })
+      this.setState({ posts: filterList })
+    }
+
+  }
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener("focus", () => {
   //     setLoading(true);
@@ -50,8 +108,19 @@ class Alltransation extends React.Component {
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }
-    const { posts } = this.state;
-
+    const { posts, hospital } = this.state;
+    const HospitalList = hospital.length ? (
+      hospital.map((item) => {
+        let item_copy = JSON.parse(item)
+        return (
+          <option key={item_copy._id} value={item_copy._id} >
+            {item_copy.name}
+          </option>
+        );
+      })
+    ) : (
+        <div className="center">No Doctor</div>
+      );
     const TransactionsList = posts.length ? (
       posts.map((post) => {
         return (
@@ -88,17 +157,17 @@ class Alltransation extends React.Component {
         );
       })
     ) : (
-      <div
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "150px",
-          marginBottom: "100px",
-        }}
-      >
-        <img src={Spinner} alt="Loading" />
-      </div>
-    );
+        <div
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "150px",
+            marginBottom: "100px",
+          }}
+        >
+          <img src={Spinner} alt="Loading" />
+        </div>
+      );
     return (
       <div className="Appcontainer">
         <Navigation />
@@ -150,7 +219,15 @@ class Alltransation extends React.Component {
               </div>
               <div>
                 <p>
-                  <b>Status</b>
+                  <select
+                    id="doctors"
+                    onChange={this.handleStatus}
+                    className="transdoctor"
+                  >
+                    <option value="status">Status</option>
+                    <option value="initiated">INITIATED</option>
+                    <option value="paid">PAID</option>
+                  </select>
                 </p>
               </div>
             </div>

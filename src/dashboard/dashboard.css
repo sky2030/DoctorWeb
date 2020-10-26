@@ -4,6 +4,24 @@
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
+.reportcard {
+  width: 75%;
+  margin: 10px auto 60px auto;
+  background: rgb(238, 238, 238);
+  background: radial-gradient(
+    circle,
+    rgba(238, 238, 238, 1) 0%,
+    rgba(215, 230, 246, 1) 100%
+  );
+  text-align: center;
+}
+.reportcard h2 {
+  background-color: rgb(46 82 147);
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+}
 .transactioncard
  {
   width: 80%;
@@ -91,7 +109,8 @@ input:focus, textarea:focus, select:focus{
     padding-top: 5px;
 }
 .tablecontent h3 {
-    margin-bottom: 60px;
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 .row{
   display: flex;
@@ -204,7 +223,8 @@ input.editsect {
     border-bottom: 1px solid #444!important;
     border: 0px;
 	padding:5px;
-    margin-bottom: 50px;
+    margin-bottom: 1px;
+    height:20px
 }
 img.vert-move {
   -webkit-animation: mover 1s infinite alternate;
@@ -575,6 +595,13 @@ form {
   padding: 5px;
   text-align: center;
 }
+.allfooter h2{
+   background-color: rgb(46 82 147);
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+}
 .allmanage h2 {
   background-color: rgb(46 82 147);
   color: #fff;
@@ -661,6 +688,8 @@ form {
 
 .adddept .row {
   margin-bottom: 5px;
+  align-items: center;
+    justify-content: center;
 }
 .btncontainer {
   padding: 15px 0px;
@@ -707,6 +736,28 @@ form {
   padding: 0;
   width: 60%;
 }
+.allfooter img {
+  width: 40px;
+  vertical-align: middle;
+  padding-right: 10px;
+}
+.allfooter ul {
+  list-style-type: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 80%;
+}
+.allfooter{
+width: 80%;
+  margin: 10px auto 60px auto;
+  background: rgb(238, 238, 238);
+  background: radial-gradient(
+    circle,
+    rgba(238, 238, 238, 1) 0%,
+    rgba(215, 230, 246, 1) 100%
+  );
+  text-align: center;
+}
 
 .allmanage ul {
   list-style-type: none;
@@ -722,6 +773,24 @@ form {
   border-radius: 4px;
   font-size: 16px;
   font-weight: bold;
+  /* margin-right: 4em;
+  padding-right: 10em; */
+}
+.allfooter ul li {
+  padding: 15px;
+  text-align: left;
+  background-color: rgba(22, 115, 190, 0.8);
+  margin: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  /* margin-right: 4em;
+  padding-right: 10em; */
+}
+.transdoctor {
+  color: #0669b9;
+  font-weight: bold;
+  border-width: 0px;
 }
 .allmanage ul li {
   padding: 15px;
@@ -741,6 +810,10 @@ form {
   color: #fff;
 }
 .alldept ul li a {
+  text-decoration: none;
+  color: #fff;
+}
+.allfooter ul li a {
   text-decoration: none;
   color: #fff;
 }

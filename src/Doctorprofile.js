@@ -37,9 +37,13 @@ class Myprofile extends React.Component {
       })
       .then((response) => {
         // console.log(response);
-        const data = response.data.data;
-        this.setState({ doctors: data });
-        console.log("Data has been received!!");
+        if (response.data.code === 200) {
+          const data = response.data.data;
+          this.setState({ doctors: data });
+          console.log("Data has been received!!");
+        } else {
+          alert(response.data.message)
+        }
       })
       .catch(() => {
         alert("Error retrieving data!!");

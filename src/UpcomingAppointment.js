@@ -44,6 +44,7 @@ class Allappointment extends React.Component {
       isDatePickerAvailable: false,
       appointmentList: "",
       loading: "",
+      Joindata: []
     };
   }
 
@@ -75,7 +76,7 @@ class Allappointment extends React.Component {
     )
       .then((res) => res.json())
       .then((results) => {
-        console.log(JSON.stringify(results));
+        //  console.log(JSON.stringify(results));
         if (results.code === 200) {
           this.setState({
             appointmentList: results.data,
@@ -85,7 +86,7 @@ class Allappointment extends React.Component {
         }
       })
       .catch((err) => {
-        alert("SOMETHING_WENT_WRONG");
+        alert(err);
       });
   };
 
@@ -107,6 +108,7 @@ class Allappointment extends React.Component {
   };
 
   joinConversationPressed = (item) => {
+    console.log("Appointment ID : " + item.id)
     fetch(
       `https://stage.mconnecthealth.com/v1/doctor/appointment/join-now?appointment_id=${item.id}`,
       {
@@ -119,19 +121,27 @@ class Allappointment extends React.Component {
     )
       .then((res) => res.json())
       .then((results) => {
-        //console.log(results);
-        if (results.message !== "success") {
-          alert(results.message);
+        //  console.log(results);
+        this.setState({
+          submitted: true
+        })
+        if (results.code === 200) {
+          this.setState({
+            Joindata: results.data
+          })
+          // Redirect("EnableX", {
+          //   streamId: results.data.enableX.room_id,
+          //   token: results.data.enableX.token,
+          // });
         } else {
-          Redirect("EnxConferenceScreen", {
-            streamId: results.data.enableX.room_id,
-            token: results.data.enableX.token,
-          });
+          alert(results.message);
+          // <Redirect to="/EnableX" />
+
         }
       })
       .catch((err) => {
         console.log(err);
-        alert("SOMETHING_WENT_WRONG");
+        alert(err);
       });
   };
   statusForJoinConversation = (item) => {
@@ -149,36 +159,9 @@ class Allappointment extends React.Component {
   //     var returnValue = moment(sdate.getTime(), "x").format("hh:mm A");
   // DeviceInfo.is24Hour() ? "HH:mm" : "hh:mm A"
 
-  joinConversationPressed = (item) => {
-    fetch(
-      `https://stage.mconnecthealth.com/v1/doctor/appointment/join-now?appointment_id=${item.id}`,
-      {
-        method: "Get",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((results) => {
-        //console.log(results);
-        if (results.message != "success") {
-          alert(results.message);
-        } else {
-          Redirect("EnxConferenceScreen", {
-            streamId: results.data.enableX.room_id,
-            token: results.data.enableX.token,
-          });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        alert("SOMETHING_WENT_WRONG");
-      });
-  };
+
   statusForJoinConversation = (item) => {
-    //console.log(item);
+    console.log(item);
     return 0;
   };
   StringFromTime = (timevalue) => {
@@ -199,6 +182,15 @@ class Allappointment extends React.Component {
       return <Redirect to="/" />;
     }
 
+    const RoomData = this.state.Joindata
+
+    // if (this.state.submitted == true) {
+    //   return <Redirect to={{
+    //     pathname: '/EnableX',
+    //     item: { RoomData }
+    //   }} />
+    // }
+
     const { appointmentList } = this.state;
     const appointmentdata = appointmentList.length ? (
       appointmentList.map((item) => {
@@ -215,8 +207,14 @@ class Allappointment extends React.Component {
                 </p>
                 <p>{item.patient.name}</p>
               </div>
+              <Link
+                to={{
+                  pathname: "/Reports",
+                  Data: { item },
+                }}
+                className="MarginTop10"
+              >
 
-              <Link to="/Reports" className="MarginTop10">
                 <button
                   style={{
                     width: "9em",
@@ -230,20 +228,35 @@ class Allappointment extends React.Component {
                 </button>
               </Link>
               <div className="MarginTop10">
-                <button
-                  onClick={() => this.joinConversationPressed(item)}
-                  style={{
-                    width: "10em",
-                    height: "3em",
-                    borderRadius: "0.5em",
-                    color: "white",
-                    backgroundColor: "green",
+                <Link
+                  to={{
+                    pathname: "/EnableX",
+                    Enx: { item },
                   }}
                 >
-                  <b>Start Consultation</b>
-                </button>
+                  <button
+                    // onClick={() => this.joinConversationPressed(item)}
+                    style={{
+                      width: "10em",
+                      height: "3em",
+                      borderRadius: "0.5em",
+                      color: "white",
+                      backgroundColor: "green",
+                    }}
+                  >
+                    <b>Start Consultation</b>
+                  </button>
+                </Link>
               </div>
-              <Link to="/Prescription" className="MarginTop10">
+
+
+              <Link
+                to={{
+                  pathname: "/Prescription",
+                  Data: { item },
+                }}
+                className="MarginTop10"
+              >
                 <button
                   style={{
                     width: "9em",
@@ -261,17 +274,17 @@ class Allappointment extends React.Component {
         );
       })
     ) : (
-      <div
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "150px",
-          marginBottom: "100px",
-        }}
-      >
-        <img src={Spinner} alt="Loading" />
-      </div>
-    );
+        <div
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "150px",
+            marginBottom: "100px",
+          }}
+        >
+          <img src={Spinner} alt="Loading" />
+        </div>
+      );
 
     return (
       <div className="Appcontainer">

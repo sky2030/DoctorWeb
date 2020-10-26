@@ -79,7 +79,7 @@ class ManageSlots extends React.Component {
       })
       .catch((err) => {
         //setLoading(false);
-        alert("SOMETHING_WENT_WRONG");
+        alert(err);
       });
   };
   updateStartEndDate = (sdate) => {
@@ -211,17 +211,17 @@ class ManageSlots extends React.Component {
         );
       })
     ) : (
-      <div
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "150px",
-          marginBottom: "100px",
-        }}
-      >
-        <img src={Spinner} alt="Loading" />
-      </div>
-    );
+        <div
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "150px",
+            marginBottom: "100px",
+          }}
+        >
+          <img src={Spinner} alt="Loading" />
+        </div>
+      );
 
     return (
       <div className="Appcontainer">

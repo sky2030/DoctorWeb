@@ -147,11 +147,76 @@ class UpdateDoctorprofile extends React.Component {
     return true;
   };
 
+  UpdateDoctor = (event) => {
+    event.preventDefault();
+    const {
+      first_name,
+      last_name,
+      mobile,
+      email,
+      gender,
+      dob,
+      password,
+      picture,
+      //registration_no,
+      experience,
+      degree,
+      designation,
+      //deptcode,
+      specialities,
+      //department
+    } = this.state;
+    const isValid = this.validate();
+    if (isValid) {
+      const payload = new FormData();
+      payload.append("first_name", first_name);
+      payload.append("last_name", last_name);
+      payload.append("mobile", mobile);
+      payload.append("email", email);
+      payload.append("gender", gender);
+      payload.append("dob", dob);
+      payload.append("password", password);
+      payload.append("picture", picture);
+      //payload.append("registration_no", registration_no);
+      payload.append("experience", experience);
+      payload.append("degree", degree);
+      payload.append("designation", designation);
+      //payload.append("department", department);
+      //payload.append("deptcode", deptcode);
+      payload.append("specialities", specialities);
+
+      axios({
+        url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.state.id}`,
+        method: "PUT",
+        data: payload,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+        .then((response) => {
+          if (response.data.code === 200) {
+            alert(response.data.message);
+            console.log("Data has been sent to the server successfully");
+          } else {
+            console.log(response.data.message);
+          }
+          this.resetUserInputs();
+          this.setState({
+            submitted: true,
+          });
+        })
+        .catch(() => {
+          console.log("internal server error");
+        });
+    }
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     const isValid = this.validate();
     if (isValid) {
-      console.log("we are in handle submit");
+      //console.log("we are in handle submit");
       const payload = {
         first_name: this.state.first_name,
         last_name: this.state.last_name,
@@ -172,16 +237,21 @@ class UpdateDoctorprofile extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          console.log(this.state.picture);
-          this.resetUserInputs();
-
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          if (response.data.code === 200) {
+            alert("Success: " + response.data.message);
+            console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert("Error: " + response.data.message);
+            console.log(response.data.message);
+          }
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error)
           console.log("internal server error");
         });
     }
@@ -190,6 +260,14 @@ class UpdateDoctorprofile extends React.Component {
   handleChange = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value });
+  };
+
+  onFileHandler = async (event) => {
+    await this.setState({
+      picture: event.target.files[0],
+      loaded: 0,
+    });
+    console.log(this.state.picture);
   };
 
   // onChangeHandler = (event) => {
@@ -254,14 +332,19 @@ class UpdateDoctorprofile extends React.Component {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.url);
-        this.setState({
-          picture: data.url,
-        });
-        console.log(this.state.picture);
+        if (data.code === 200) {
+          console.log(data.url);
+          this.setState({
+            picture: data.url,
+          });
+          console.log(this.state.picture);
+        } else {
+          alert(data.message)
+        }
       })
       .catch((err) => {
         console.log("error while uploading" + err);
+        alert(err)
       });
   };
 

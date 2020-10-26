@@ -188,11 +188,12 @@ class Manageconsulation extends React.Component {
 					alert(data.message);
 				} else {
 					alert(`Error:${data.code} Message: ${data.message}`);
+
 				}
 			})
 			.catch((err) => {
 				console.log(err);
-				alert("Something went wrong");
+				alert(err);
 			});
 	};
 
