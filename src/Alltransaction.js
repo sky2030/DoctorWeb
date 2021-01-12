@@ -8,14 +8,23 @@ import moment from "moment-timezone";
 import axios from "axios";
 import Spinner from "./img/Spinnergrey.gif";
 
+const BASE = "https://stage.mconnecthealth.com";
+const BASE_URL = `${BASE}/v1/doctor/`
+
 class Alltransation extends React.Component {
   constructor(props) {
     super(props);
+    const token = localStorage.getItem("token");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
     this.state = {
+      loggedIn,
       posts: [],
       dup_post: [],
       hospital: [],
-
 
     };
   }
@@ -23,6 +32,57 @@ class Alltransation extends React.Component {
   componentDidMount = () => {
     this.setState({ hospital: [] })
     this.GetTransactions();
+  };
+
+  LoadMoreTransaction = () => {
+    const { posts } = this.state
+    // let offset = 0
+    // if (posts && posts.length > 0) {
+    //   offset = posts.length
+    // }
+    const URL = `${BASE_URL}orders?offset = ${posts.length}`
+    console.log(URL);
+    axios
+      .get(`${BASE_URL}orders?offset=${posts.length}`, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          let data = response.data.data;
+          if (posts && posts.length > 0) {
+            this.setState({
+              posts: posts.concat(data),
+              dup_post: posts.concat(data)
+            })
+          }
+
+        } else {
+          this.setState({
+            posts: [],
+            dup_post: [],
+          });
+        }
+      })
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+        }
+        else {
+          alert("Something Went Wrong")
+        }
+      });
   };
 
   GetTransactions = () => {
@@ -74,8 +134,23 @@ class Alltransation extends React.Component {
           });
         }
       })
-      .catch((error) => {
-        alert(error);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -95,19 +170,12 @@ class Alltransation extends React.Component {
     }
 
   }
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener("focus", () => {
-  //     setLoading(true);
-  //     GetTransactiondata();
 
-  //   });
-
-  //   return unsubscribe;
-  // }, [route.params]);
   render() {
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }
+
     const { posts, hospital } = this.state;
     const HospitalList = hospital.length ? (
       hospital.map((item) => {
@@ -125,31 +193,27 @@ class Alltransation extends React.Component {
       posts.map((post) => {
         return (
           <div className="maintrans" key={post.invoice}>
-            <div className="alltransation">
+            <div className="alltransation1">
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className='list'
               >
                 <p>{post.invoice}</p>
               </div>
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className='list'
               >
                 <p>{moment(post.date).format("ll")}</p>
               </div>
-              <div>
+              <div className='list'>
                 <p> {post.patient_name}</p>
               </div>
-              <div>
+              <div className='list'>
                 <p>
                   {" "}
                   {post.amount} {post.currency}
                 </p>
               </div>
-              <div>
+              <div className='list'>
                 <p>{post.status.toUpperCase()} </p>
               </div>
             </div>
@@ -168,11 +232,14 @@ class Alltransation extends React.Component {
           <img src={Spinner} alt="Loading" />
         </div>
       );
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     return (
       <div className="Appcontainer">
         <Navigation />
 
-        <div className="transactioncard pb15">
+        <div className="transactioncard">
           <div className="backarrow">
             {" "}
             <Link to="/Dashboard">
@@ -182,11 +249,9 @@ class Alltransation extends React.Component {
           <h2>All Transactions</h2>
 
           <div className="maintrans">
-            <div className="alltransation">
+            <div className="alltransation1">
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="listhead"
               >
                 <p>
                   <b>Invoice No</b>
@@ -194,9 +259,7 @@ class Alltransation extends React.Component {
               </div>
 
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="listhead"
               >
                 <p>
                   <b>Date</b>
@@ -207,17 +270,17 @@ class Alltransation extends React.Component {
                                 <p>Avneet Dixit</p>
                             </div> */}
 
-              <div>
+              <div className="listhead">
                 <p>
                   <b>Patient Name</b>
                 </p>
               </div>
-              <div>
+              <div className="listhead">
                 <p>
                   <b>Amount</b>
                 </p>
               </div>
-              <div>
+              <div className="listhead">
                 <p>
                   <select
                     id="doctors"
@@ -230,11 +293,17 @@ class Alltransation extends React.Component {
                   </select>
                 </p>
               </div>
+
             </div>
           </div>
           {TransactionsList}
+          {posts.length >= 20 ? <div className="tranbottom">
+            <button onClick={() => this.LoadMoreTransaction()}> <i className="fa fa-arrow-down"></i> Load More</button>
+          </div> : null}
         </div>
+
       </div>
+
     );
   }
 }

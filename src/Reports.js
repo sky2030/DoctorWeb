@@ -7,7 +7,7 @@ import { Redirect } from "react-router-dom";
 import Spinner from "./img/Spinnergrey.gif";
 import Navigation from './Nav';
 import moment from "moment-timezone"
-import report from './img/image_report.jpg'
+//import report from './img/image_report.jpg'
 
 const initialState = {
     advice: "",
@@ -66,30 +66,32 @@ class Reports extends React.Component {
                     alert(results.message);
                 }
             })
-            .catch((err) => {
-                alert(err);
+            .catch((Error) => {
+                if (Error.message === "Network Error") {
+                    alert("Please Check your Internet Connection")
+                    console.log(Error.message)
+                    return;
+                }
+                if (Error.response.data.code === 403) {
+                    alert(Error.response.data.message)
+                    console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+                    this.setState({
+                        loggedIn: false
+                    })
+
+                }
+                else {
+                    alert("Something Went Wrong")
+                }
             });
     };
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener("focus", () => {
-    //         console.log("Add report focus called with id :", route.params.appointment_id)
-    //         key_prefix = ""
-    //         if (route.params) {
-    //             key_prefix = route.params.appointment_id
-    //             setAppointment_id(route.params.appointment_id)
-    //             fetchData(route.params.appointment_id)
-    //         }
-    //         else {
-    //             setAppointment_id("")
-    //             fetchData(undefined)
-    //         }
 
-    //     });
-    //     return unsubscribe;
-    // }, [route.params]);
 
     render() {
         if (localStorage.getItem("token") == null) {
+            return <Redirect to="/" />;
+        }
+        if (this.state.loggedIn === false) {
             return <Redirect to="/" />;
         }
         const { patientName, Report } = this.state

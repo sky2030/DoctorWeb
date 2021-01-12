@@ -24,7 +24,7 @@ class Manageconsulation extends React.Component {
 		this.state = {
 			loggedIn,
 			post: {},
-			d_id: this.props.match.params.id,
+			d_id: "",
 			startTime: 0,
 			endTime: 0,
 			dayfrom: -1,
@@ -35,7 +35,7 @@ class Manageconsulation extends React.Component {
 		};
 	}
 	componentDidMount = () => {
-		console.log(`This is Doctor ID ${this.props.match.params.id}`);
+		//console.log(`This is Doctor ID ${this.props.match.params.id}`);
 		// this.getDoctor();
 	};
 
@@ -57,8 +57,23 @@ class Manageconsulation extends React.Component {
 	//         this.setState({ post: data });
 	//         console.log("Data has been received!!");
 	//       })
-	//       .catch(() => {
-	//         alert("Error retrieving data!!");
+	//       .catch((Error) => {
+	// 		  if (Error.message === "Network Error") {
+	// 			  alert("Please Check your Internet Connection")
+	// 			  console.log(Error.message)
+	// 			  return;
+	// 		  }
+	// 		  if (Error.response.data.code === 403) {
+	// 			  alert(Error.response.data.message)
+	// 			  console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+	// 			  this.setState({
+	// 				  loggedIn: false
+	// 			  })
+
+	// 		  }
+	// 		  else {
+	// 			  alert("Something Went Wrong")
+	// 		  }
 	//       });
 	//   };
 
@@ -173,7 +188,7 @@ class Manageconsulation extends React.Component {
 
 		console.log(payload, d_id);
 
-		fetch(`https://stage.mconnecthealth.com/v1/hospital/doctors/${d_id}/slots`, {
+		fetch(`https://stage.mconnecthealth.com/v1/doctor/slots`, {
 			method: "post",
 			headers: {
 				"Content-Type": "application/json",
@@ -186,14 +201,28 @@ class Manageconsulation extends React.Component {
 				if (data.code === 200) {
 					console.log("Slot has been Created Successfully");
 					alert(data.message);
+					this.setState({
+						submitted: true
+					})
 				} else {
 					alert(`Error:${data.code} Message: ${data.message}`);
 
 				}
 			})
-			.catch((err) => {
-				console.log(err);
-				alert(err);
+			.catch((Error) => {
+				if (Error.message === "Network Error") {
+					alert("Please Check your Internet Connection")
+					console.log(Error.message)
+					return;
+				}
+				if (Error.response.data.code === 403) {
+					alert(Error.response.data.message)
+					console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+					this.setState({
+						loggedIn: false
+					})
+
+				}
 			});
 	};
 
@@ -239,6 +268,9 @@ class Manageconsulation extends React.Component {
 
 		if (this.state.submitted) {
 			return <Redirect to="/ManageSlots" />;
+		}
+		if (this.state.loggedIn === false) {
+			return <Redirect to="/" />;
 		}
 		return (
 			<div className='Appcontainer'>
@@ -355,15 +387,12 @@ class Manageconsulation extends React.Component {
 						</div>
 
 						<div className="btncontainer">
-							<button type="submit">
+							<button type="submit" className="Updatebtn">
 								<i className="fas fa-save"></i> Save
-            </button>
-							<button>
-								<i className="far fa-window-close"></i>Cancel
             </button>
 						</div>
 					</form>
-					{dayfrom}, {dayto}, {startTime}, {endTime}, {duration}, {days}
+
 				</div>
 			</div>
 		);

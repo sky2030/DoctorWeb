@@ -13,9 +13,14 @@ import ManageSlots from "./ManageSlots";
 import Myprofile from "./DoctorProfile";
 import splash from "./splash";
 import Prescription from "./PrescriptionForm";
+// import PrescriptionHistory from './PrescriptionHistory'
 import Reports from "./Reports";
 import EnxConferenceScreen from "./EnxConferenceScreen"
-import PrivacyPage from './PrivacyPage'
+import ForgetPassword from './ForgetPassword'
+import Signup from './Signup'
+import AddFee from './Adddoctorfee'
+import Consent from './Consentform'
+import ndhmReport from './NdhmReport'
 
 function App() {
   return (
@@ -34,9 +39,14 @@ function App() {
           <Route path="/ManageSlots" component={ManageSlots} />
           <Route path="/Myprofile" component={Myprofile} />
           <Route path="/Prescription" component={Prescription} />
+          {/* <Route path="/P_prescription" component={PrescriptionHistory} /> */}
           <Route path="/Reports" component={Reports} />
           <Route path="/EnableX" component={EnxConferenceScreen} />
-          <Route path="/PrivacyPage" component={PrivacyPage} />
+          <Route path="/forgetpassword" component={ForgetPassword} />
+          <Route path="/signup" component={Signup} />
+          <Route path="/addfee" component={AddFee} />
+          <Route path="/Consent" component={Consent} />
+          <Route path="/ndhmReport" component={ndhmReport} />
         </Switch>
       </div>
       <Footer />

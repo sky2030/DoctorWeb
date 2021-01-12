@@ -5,6 +5,14 @@ import logo from "./img/logo.png";
 import { Link } from "react-router-dom";
 
 class Nav extends React.Component {
+  Display = () => {
+    var x = document.getElementById("myNav");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
+    }
+  }
   render() {
     return (
       <header>
@@ -14,7 +22,7 @@ class Nav extends React.Component {
               <img src={logo} alt="logo" />
             </Link>
           </div>
-          <ul>
+          <ul className="animated slideInDown" id="myNav">
             <li>
               <Link to="/Dashboard">
                 <i className="fas fa-home"></i>Dashboard
@@ -42,6 +50,9 @@ class Nav extends React.Component {
               </Link>
             </li>
           </ul>
+          <div onClick={() => this.Display()} className="icon">
+            <i class="fa fa-bars"></i>
+          </div>
         </div>
       </header>
     );

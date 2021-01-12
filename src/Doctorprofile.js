@@ -45,8 +45,23 @@ class Myprofile extends React.Component {
           alert(response.data.message)
         }
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -56,75 +71,83 @@ class Myprofile extends React.Component {
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }
+
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     return (
       <div className="Appcontainer">
         <Nav />
 
-        <div className="dashboard_wrap">
+        <div className="dashboard_wrap2">
           <div className="headeralign">
             <div className="banner-text">
               <img
-                style={{
-                  width: "30vw",
-                  height: "20em",
-                  borderColor: "blue",
-                  borderRadius: "3em",
-                  marginTop: "1em",
-                }}
                 src={doctors.picture}
                 alt="Doctor_img"
               />
             </div>
 
             <div className="flex-container scroll">
-              <div className="col5 box-shad">
+              <div className="col5 box-shad"
+              >
                 <h3>Contact Information</h3>
                 <p>
                   <i className="fas fa-user-md"></i> <b>Name: </b>
-                  {doctors.first_name} {doctors.last_name}
+                  {doctors.name}
                 </p>
                 <p>
-                  <i className="far fa-envelope"></i> <b>Email: </b>
-                  {doctors.email}
-                </p>
-                <p>
-                  <i className="fas fa-phone-alt"></i> <b>Phone: </b>{" "}
-                  {doctors.mobile}
-                </p>
-              </div>
-              <div className="col5 box-shad">
-                <h3>
-                  <i className="fas fa-map-marker-alt"></i>Address
-                </h3>
-                <p>
-                  <b>Degree: </b>
+                  <i class="fas fa-file-medical-alt"></i><b>Degree: </b>
                   {doctors.degree}
                 </p>
                 <p>
-                  <b>Designation: </b>
+                  <i class="fas fa-user-nurse"></i><b>Designation: </b>
                   {doctors.designation}
                 </p>
                 <p>
-                  <b>Department: </b>
+
+                  <i class="far fa-building"></i><b>Department: </b>
                   {doctors.department}
                 </p>
                 <p>
-                  <b>Experience: </b>
+                  <i className="fas fa-user-md"></i><b>Experience: </b>
                   {doctors.experience}
                 </p>
                 <p>
-                  <b>specialities: </b>
+                  <i class="fas fa-book-medical"></i><b>Specialities: </b>
                   {doctors.specialities}
                 </p>
+                <p>
+                  <i class="fas fa-rupee-sign"></i><b>Consultation Fee: </b>
+                  {doctors.consultation_fee}
+                </p>
+                <p>
+                  <i className="far fa-envelope"></i><b>Email: </b>
+                  {doctors.email}
+                </p>
+                <p>
+                  <i className="fas fa-phone-alt"></i><b>Phone: </b>{" "}
+                  {doctors.mobile}
+                </p>
               </div>
+
             </div>
           </div>
-
+          {/* 
           <div className="add_departmet">
             <Link to="/Updatedoctorprofile">
               <i className="far fa-edit"></i> Update Profile{" "}
             </Link>
-          </div>
+          </div> */}
+        </div>
+        <div className="add_departmet">
+          <Link to="/Updatedoctorprofile">
+            <i className="far fa-edit"></i> Update Profile{" "}
+          </Link>
+
+          {/* <Link to="/addfee">
+            <i className="far fa-edit"></i> Update Consultation Fee{" "}
+          </Link> */}
         </div>
       </div>
     );

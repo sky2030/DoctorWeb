@@ -1,12 +1,21 @@
 import React, { Component } from 'react'
 import Nav from "./Nav";
 import EnableX from './img/enablex_developer.png'
+import { Redirect, Link } from "react-router-dom";
 
 
 export default class EnxConferenceScreen extends Component {
+    constructor(props) {
+        super(props);
+        const token = localStorage.getItem("token");
 
-    state = {
-        A_id: ''
+        let LoggedIn = true;
+        if (token == null) {
+            LoggedIn = false;
+        }
+        this.state = {
+            A_id: ''
+        }
     }
 
     componentDidMount = async () => {
@@ -51,12 +60,29 @@ export default class EnxConferenceScreen extends Component {
 
                 }
             })
-            .catch((err) => {
-                console.log(err);
-                alert("SOMETHING_WENT_WRONG");
+            .catch((Error) => {
+                if (Error.message === "Network Error") {
+                    alert("Please Check your Internet Connection")
+                    console.log(Error.message)
+                    return;
+                }
+                if (Error.response.data.code === 403) {
+                    alert(Error.response.data.message)
+                    console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+                    this.setState({
+                        loggedIn: false
+                    })
+
+                }
+                else {
+                    alert("Something Went Wrong")
+                }
             });
     };
     render() {
+        if (this.state.loggedIn === false) {
+            return <Redirect to="/" />;
+        }
         return (
             <div>
                 <Nav />

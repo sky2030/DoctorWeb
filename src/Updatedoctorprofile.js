@@ -1,17 +1,19 @@
 import React from "react";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
-//import docicon from './img/doctor-icon.jpg';
-//import doctorprof from './img/doctorprof.png';
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 import Nav from "./Nav";
+import moment from "moment-timezone";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class UpdateDoctorprofile extends React.Component {
   constructor(props) {
     super(props);
     const token = localStorage.getItem("token");
+
     let loggedIn = true;
     if (token == null) {
       loggedIn = false;
@@ -23,7 +25,7 @@ class UpdateDoctorprofile extends React.Component {
       mobile: "",
       email: "",
       gender: "",
-      dob: "",
+      dob: undefined,
       password: "",
       picture: "",
       registration_no: "",
@@ -45,7 +47,6 @@ class UpdateDoctorprofile extends React.Component {
     };
   }
   componentDidMount = () => {
-    console.log(`This is Doctor ID ${this.props.match.params.id}`);
     this.getDoctor();
   };
 
@@ -57,7 +58,7 @@ class UpdateDoctorprofile extends React.Component {
         },
       })
       .then((response) => {
-        //  console.log(response.data.data);
+        console.log(response.data.data);
         const data = response.data.data;
         this.setState({
           first_name: data.first_name,
@@ -73,13 +74,28 @@ class UpdateDoctorprofile extends React.Component {
           degree: data.degree,
           designation: data.designation,
           specialities: data.specialities,
-          id: data._id,
+          id: data.id,
         });
 
         console.log("Data has been received!!");
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -186,7 +202,7 @@ class UpdateDoctorprofile extends React.Component {
       payload.append("specialities", specialities);
 
       axios({
-        url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.state.id}`,
+        url: `https://stage.mconnecthealth.com/v1/doctor/${this.state.id}`,
         method: "PUT",
         data: payload,
         headers: {
@@ -196,18 +212,34 @@ class UpdateDoctorprofile extends React.Component {
       })
         .then((response) => {
           if (response.data.code === 200) {
-            alert(response.data.message);
+            alert("Success: " + response.data.message);
             console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
           } else {
+            alert("Error: " + response.data.message);
             console.log(response.data.message);
           }
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
         })
-        .catch(() => {
-          console.log("internal server error");
+        .catch((Error) => {
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -222,7 +254,7 @@ class UpdateDoctorprofile extends React.Component {
         last_name: this.state.last_name,
         mobile: this.state.mobile,
         email: this.state.email,
-        dob: this.state.dob,
+        dob: moment(this.state.dob).format("DD/MM/YYYY"),
         picture: this.state.picture,
         experience: this.state.experience,
         degree: this.state.degree,
@@ -251,8 +283,22 @@ class UpdateDoctorprofile extends React.Component {
           }
         })
         .catch((Error) => {
-          alert(Error)
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -268,6 +314,13 @@ class UpdateDoctorprofile extends React.Component {
       loaded: 0,
     });
     console.log(this.state.picture);
+  };
+
+  handleDatePicker = (date) => {
+    console.log(date);
+    this.setState({
+      dob: date,
+    });
   };
 
   // onChangeHandler = (event) => {
@@ -342,9 +395,23 @@ class UpdateDoctorprofile extends React.Component {
           alert(data.message)
         }
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
-        alert(err)
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -362,6 +429,14 @@ class UpdateDoctorprofile extends React.Component {
       degree: "",
       designation: "",
       specialities: "",
+      emailError: "",
+      phoneError: "",
+      nameError: "",
+      dobError: "",
+      expError: "",
+      degreeError: "",
+      designationError: "",
+      specialitiesError: ""
     });
   };
   render() {
@@ -380,6 +455,9 @@ class UpdateDoctorprofile extends React.Component {
 
     if (this.state.submitted) {
       return <Redirect to="/Myprofile" />;
+    }
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
     }
     return (
       <div className='Appcontainer'>
@@ -404,9 +482,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter First Name"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.nameError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.nameError}
               </div>
 
               <div className="row">
@@ -417,9 +495,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Last Name"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.nameError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.nameError}
               </div>
               <div className="row">
                 <input
@@ -429,9 +507,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Email Address"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.emailError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.emailError}
               </div>
               <div className="row">
                 <input
@@ -441,10 +519,25 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Mobile No"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.phoneError}
-                </div>
               </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.phoneError}
+              </div>
+              {/* <div className="Calendar">
+                Date of Birth:
+                  <DatePicker
+                  disabled={false}
+                  mode="date"
+                  //selected={this.state.dob}
+                  onChange={(date) => this.handleDatePicker(date)}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+
+
+                />
+              </div> */}
 
               <div className="row">
                 <input
@@ -454,9 +547,10 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Date of Birth"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.dobError}
-                </div>
+
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.dobError}
               </div>
 
               <div className="row">
@@ -467,9 +561,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Experience"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.expError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.expError}
               </div>
 
               <div className="row">
@@ -480,9 +574,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Degree"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.degreeError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.degreeError}
               </div>
 
               <div className="row">
@@ -493,9 +587,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter Designation"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.designationError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.designationError}
               </div>
 
               <div className="row">
@@ -506,9 +600,9 @@ class UpdateDoctorprofile extends React.Component {
                   placeholder="Enter specialities"
                   onChange={this.handleChange}
                 />
-                <div style={{ fontSize: 12, color: "red" }}>
-                  {this.state.specialitiesError}
-                </div>
+              </div>
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.specialitiesError}
               </div>
 
               <div className="row">
@@ -526,10 +620,10 @@ class UpdateDoctorprofile extends React.Component {
                 {/* <button onClick={this.handleUpload}>
                 <i className="fas fa-check"></i>Upload Image{" "}
               </button> */}
-                <button onClick={this.resetUserInputs}>
+                <button onClick={this.resetUserInputs} className="Updatebtn" type="reset">
                   <i className="fas fa-check"></i>Reset{" "}
                 </button>
-                <button type="submit">
+                <button type="submit" className="Updatebtn">
                   <i className="fas fa-save"></i>Update Details
               </button>
               </div>
