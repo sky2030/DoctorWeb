@@ -82,9 +82,15 @@ class Login extends React.Component {
           }
         })
         .catch((Error) => {
-          //console.log(JSON.stringify(Error))
+          // console.log(JSON.stringify(Error))
+
           if (Error.message === "Network Error") {
             alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.message === "Request failed with status code 422") {
+            alert("Your Registration is Pending for Approval, Please Contact Your Hospital Admin")
             console.log(Error.message)
             return;
           }

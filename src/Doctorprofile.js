@@ -2,7 +2,9 @@ import React from "react";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 //import docicon from './img/doctor-icon.jpg';
-//import doctorprof from './img/doctorprof.png';
+import doctorDefault from './img/doctor.png';
+import FemaleAvatar from './img/Female-Doctor.jpg';
+import MaleAvatar from './img/Male-Doctor.jpg';
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
@@ -36,7 +38,7 @@ class Myprofile extends React.Component {
         },
       })
       .then((response) => {
-        // console.log(response);
+        //console.log(response);
         if (response.data.code === 200) {
           const data = response.data.data;
           this.setState({ doctors: data });
@@ -81,12 +83,20 @@ class Myprofile extends React.Component {
 
         <div className="dashboard_wrap2">
           <div className="headeralign">
-            <div className="banner-text">
-              <img
-                src={doctors.picture}
-                alt="Doctor_img"
-              />
-            </div>
+            {doctors.gender !== "Male" ?
+              <div className="banner-text">
+                <img
+                  src={doctors.picture === "" || !doctors.picture ? FemaleAvatar : doctors.picture}
+                  alt="doctors"
+                />
+              </div> :
+              <div className="banner-text">
+                <img
+                  src={doctors.picture === "" || !doctors.picture ? MaleAvatar : doctors.picture}
+                  alt="doctors"
+                />
+              </div>}
+
 
             <div className="flex-container scroll">
               <div className="col5 box-shad"
@@ -97,29 +107,12 @@ class Myprofile extends React.Component {
                   {doctors.name}
                 </p>
                 <p>
-                  <i class="fas fa-file-medical-alt"></i><b>Degree: </b>
-                  {doctors.degree}
-                </p>
-                <p>
-                  <i class="fas fa-user-nurse"></i><b>Designation: </b>
-                  {doctors.designation}
-                </p>
-                <p>
-
                   <i class="far fa-building"></i><b>Department: </b>
                   {doctors.department}
                 </p>
                 <p>
-                  <i className="fas fa-user-md"></i><b>Experience: </b>
-                  {doctors.experience}
-                </p>
-                <p>
-                  <i class="fas fa-book-medical"></i><b>Specialities: </b>
-                  {doctors.specialities}
-                </p>
-                <p>
-                  <i class="fas fa-rupee-sign"></i><b>Consultation Fee: </b>
-                  {doctors.consultation_fee}
+                  <i class="far fa-registered"></i><b>Registration No: </b>
+                  {doctors.registration_no}
                 </p>
                 <p>
                   <i className="far fa-envelope"></i><b>Email: </b>
@@ -129,6 +122,29 @@ class Myprofile extends React.Component {
                   <i className="fas fa-phone-alt"></i><b>Phone: </b>{" "}
                   {doctors.mobile}
                 </p>
+                <p>
+                  <i class="fas fa-file-medical-alt"></i><b>Degree: </b>
+                  {doctors.degree}
+                </p>
+                <p>
+                  <i class="fas fa-user-nurse"></i><b>Designation: </b>
+                  {doctors.designation}
+                </p>
+
+                <p>
+                  <i className="fas fa-user-md"></i><b>Experience: </b>
+                  {doctors.experience}
+                </p>
+                <p>
+                  <i class="fas fa-book-medical"></i><b>Specialities: </b>
+                  {doctors.specialities}
+                </p>
+
+                <p>
+                  <i class="fas fa-rupee-sign"></i><b>Consultation Fee: </b>
+                  {doctors.consultation_fee}
+                </p>
+
               </div>
 
             </div>
@@ -145,9 +161,9 @@ class Myprofile extends React.Component {
             <i className="far fa-edit"></i> Update Profile{" "}
           </Link>
 
-          {/* <Link to="/addfee">
+          <Link to="/addfee">
             <i className="far fa-edit"></i> Update Consultation Fee{" "}
-          </Link> */}
+          </Link>
         </div>
       </div>
     );

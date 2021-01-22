@@ -33,10 +33,80 @@ class SignupDoctor extends React.Component {
             lnameError: "",
             submitted: false,
             hidden: true,
+            hospitals: [],
+            departments: [],
+            hospitalcode: "",
+            deptcode: "",
+            hospitalError: ""
         };
     }
     componentDidMount = () => {
+        this.GetHospitals()
+    };
 
+    GetHospitals = () => {
+        axios.get("https://stage.mconnecthealth.com/v1/doctor/list-hospitals")
+            .then((response) => {
+                console.log(response.data.data);
+                if (response.data.code === 200) {
+                    const data = response.data.data;
+                    this.setState({ hospitals: data });
+                    console.log("Hospitals Received!!");
+                } else {
+                    alert(response.data.message)
+                }
+            })
+            .catch((Error) => {
+                if (Error.message === "Network Error") {
+                    alert("Please Check your Internet Connection")
+                    console.log(Error.message)
+                    return;
+                }
+                if (Error.response.data.code === 403) {
+                    alert(Error.response.data.message)
+                    console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+                    this.setState({
+                        loggedIn: false
+                    })
+                }
+                else {
+                    alert("Something Went Wrong")
+                }
+            });
+    };
+
+    GetDepartments = () => {
+        const { hospitalcode } = this.state
+        let URL = `https://stage.mconnecthealth.com/v1/doctor/list-departments/${hospitalcode}`
+        console.log(URL)
+        axios.get(URL)
+            .then((response) => {
+                console.log(response.data.data);
+                if (response.data.code === 200) {
+                    const data = response.data.data;
+                    this.setState({ departments: data });
+                    console.log("Departments Received!!");
+                } else {
+                    alert(response.data.message)
+                }
+            })
+            .catch((Error) => {
+                if (Error.message === "Network Error") {
+                    alert("Please Check your Internet Connection")
+                    console.log(Error.message)
+                    return;
+                }
+                if (Error.response.data.code === 403) {
+                    alert(Error.response.data.message)
+                    console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+                    this.setState({
+                        loggedIn: false
+                    })
+                }
+                else {
+                    alert("Something Went Wrong")
+                }
+            });
     };
 
     toggleShow = () => {
@@ -51,6 +121,7 @@ class SignupDoctor extends React.Component {
         let passwordError = "";
         let regisError = '';
         let lnameError = '';
+        let hospitalError = '';
 
         if (!this.state.first_name) {
             nameError = "****Doctor Name cannot be blank";
@@ -76,6 +147,9 @@ class SignupDoctor extends React.Component {
         if (!this.state.registration_no) {
             regisError = "****Registration number cannot be blank";
         }
+        if (!this.state.hospitalcode) {
+            hospitalError = "****Select your respective Hospital";
+        }
 
         if (
             regisError ||
@@ -84,7 +158,8 @@ class SignupDoctor extends React.Component {
             lnameError ||
             passwordError ||
             genderError ||
-            phoneError
+            phoneError ||
+            hospitalError
 
         ) {
             this.setState({
@@ -94,7 +169,8 @@ class SignupDoctor extends React.Component {
                 passwordError,
                 genderError,
                 regisError,
-                lnameError
+                lnameError,
+                hospitalError
             });
             return false;
         }
@@ -105,17 +181,30 @@ class SignupDoctor extends React.Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
+        const { first_name,
+            last_name,
+            mobile,
+            email,
+            gender,
+            registration_no,
+            password,
+            hospitalcode,
+            deptcode
+        } = this.state
         const isValid = this.validate();
         if (isValid) {
             const payload = {
-                first_name: this.state.first_name,
-                last_name: this.state.last_name,
-                mobile: this.state.mobile,
-                email: this.state.email,
-                gender: this.state.gender,
-                registration_no: this.state.registration_no,
-                password: this.state.password
+                first_name,
+                last_name,
+                mobile,
+                email,
+                gender,
+                registration_no,
+                password,
+                hospitalcode,
+                deptcode
             };
+            console.log(payload)
             axios({
                 url: `https://stage.mconnecthealth.com/v1/doctor/signup`,
                 method: "POST",
@@ -181,6 +270,18 @@ class SignupDoctor extends React.Component {
         })
     }
 
+    handleHospital = async (e) => {
+        await this.setState({
+            hospitalcode: e.target.value
+        })
+        this.GetDepartments()
+    }
+
+    handleDepartment = (e) => {
+        this.setState({
+            deptcode: e.target.value
+        })
+    }
     onChangeHandler = (event) => {
         console.log("file to upload:", event.target.files[0]);
 
@@ -237,8 +338,72 @@ class SignupDoctor extends React.Component {
             mobile,
             email,
             password,
-            registration_no
+            registration_no,
+            departments,
+            hospitals
         } = this.state;
+
+        let allHospitals = [
+            {
+                _id: "allhospital",
+                hospitalname: "Select Your Hospital",
+                hospitalcode: null
+            },
+            // {
+            //     _id: "allhospital1",
+            //     hospitalname: "Fortis Hospital",
+            //     hospitalcode: "A53VHD21"
+            // },
+            // {
+            //     _id: "allhospital2",
+            //     hospitalname: "Ganga Ram Hospital",
+            //     hospitalcode: "G87RAM"
+            // },
+        ];
+
+        allHospitals = allHospitals.concat([...hospitals]);
+        const HospitalList = allHospitals.length ? (
+            allHospitals.map((item) => {
+                return (
+                    <option key={item._id} value={item.hospitalcode}>
+                        {item.hospitalname}
+                    </option>
+                );
+            })
+        ) : (
+                <option className="center" value="">No Hospitals</option>
+            );
+
+        let alldeptjson = [
+            {
+                _id: "alldept",
+                departmentname: "Select Your Department",
+                deptcode: null
+            },
+            // {
+            //     _id: "alldept1",
+            //     departmentname: "Cardiology",
+            //     deptcode: "B284CR"
+            // },
+            // {
+            //     _id: "alldept2",
+            //     departmentname: "Orthopadic",
+            //     deptcode: "CN3423H"
+            // },
+        ];
+
+        alldeptjson = alldeptjson.concat([...departments]);
+        const DeptList = alldeptjson.length ? (
+            alldeptjson.map((item) => {
+                return (
+                    <option key={item._id} value={item.deptcode}>
+                        {item.departmentname}
+                    </option>
+                );
+            })
+        ) : (
+                <option className="center" value="">No Departments</option>
+            );
 
         if (this.state.submitted) {
             return <Redirect to="/Login" />;
@@ -326,17 +491,6 @@ class SignupDoctor extends React.Component {
                             <div style={{ fontSize: 12, color: "red" }}>
                                 {this.state.phoneError}
                             </div>
-                            <select
-                                onChange={this.handleGender}>
-                                <option value="">Gender </option>
-                                <option value="Male">Male </option>
-                                <option value="Female">Female </option>
-                                <option value="Other">Other </option>
-
-                            </select>
-                            <div style={{ fontSize: 12, color: "red" }}>
-                                {this.state.genderError}
-                            </div>
                             <div className="row">
                                 <input
                                     type="text"
@@ -349,14 +503,44 @@ class SignupDoctor extends React.Component {
                             <div style={{ fontSize: 12, color: "red" }}>
                                 {this.state.regisError}
                             </div>
+                            <div className="row">
+                                <select
+                                    onChange={this.handleGender}
+                                    className="selectOption">
+                                    <option value="">Gender </option>
+                                    <option value="Male">Male </option>
+                                    <option value="Female">Female </option>
+                                    <option value="Other">Other </option>
+                                </select>
 
+                            </div>
+                            <div style={{ fontSize: 12, color: "red" }}>
+                                {this.state.genderError}
+                            </div>
+                            <div className="row">
+                                <select onChange={this.handleHospital}
+                                    className="selectOption">
+                                    {HospitalList}
+                                </select>
+                            </div>
+                            <div style={{ fontSize: 12, color: "red" }}>
+                                {this.state.hospitalError}
+                            </div>
+                            <div className="row">
+                                <select onChange={this.handleDepartment}
+                                    className="selectOption">
+                                    {DeptList}
+                                </select>
+                            </div>
                             <div className="btncontainer">
-                                <button onClick={this.resetUserInputs} type="reset" className="Updatebtn">
-                                    <i className="fas fa-check"></i>Reset{" "}
-                                </button>
                                 <button type="submit" className="Updatebtn">
                                     <i className="fas fa-save"></i>Sign Up
                                 </button>
+                                <button onClick={this.resetUserInputs}
+                                    type="reset" className="Updatebtn">
+                                    <i className="fas fa-check"></i>Reset{" "}
+                                </button>
+
                             </div>
 
                         </form>

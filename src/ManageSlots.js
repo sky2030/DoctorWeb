@@ -287,6 +287,17 @@ class ManageSlots extends React.Component {
               >
                 {moment(item.day_millis).format("ll")}{" "}
               </p>
+              {item.status === "booked" ?
+                <p
+                  className="slotalign"
+                  style={{
+                    color: this.displayColor(item.status),
+                    marginTop: "2px",
+                  }}
+                >
+                  {item.patient.name}
+                </p>
+                : null}
               <p
                 className="slotalign1"
                 style={{
@@ -315,6 +326,7 @@ class ManageSlots extends React.Component {
                     marginBottom: '5px'
                   }}></i>
               </p>
+
 
             </div>
 
@@ -366,10 +378,10 @@ class ManageSlots extends React.Component {
                 marginTop: '1px'
               }}></i>
             </div>
-            {/* <Link to="/Manageconsulation" className="btnPanel">
+            <Link to="/Manageconsulation" className="btnPanel">
               <button><i class="fas fa-plus-square"></i></button>
                         Add Slots
-                    </Link> */}
+                    </Link>
 
             <div className="flex-container1">{appointmentdata}</div>
             {appointmentList.length > 1 ?

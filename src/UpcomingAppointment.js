@@ -171,7 +171,7 @@ class Allappointment extends React.Component {
     )
       .then((res) => res.json())
       .then((results) => {
-        //  console.log(results);
+        console.log(results);
         this.setState({
           submitted: true
         })
@@ -179,10 +179,10 @@ class Allappointment extends React.Component {
           this.setState({
             Joindata: results.data
           })
-          // Redirect("EnableX", {
-          //   streamId: results.data.enableX.room_id,
-          //   token: results.data.enableX.token,
-          // });
+          Redirect("EnableX", {
+            streamId: results.data.enableX.room_id,
+            token: results.data.enableX.token,
+          });
         } else {
 
           alert(results.message);
@@ -252,7 +252,7 @@ class Allappointment extends React.Component {
     const appointmentdata = appointmentList.length ? (
       appointmentList.map((item) => {
         return (
-          <div className="maintrans">
+          <div className="bookingCard">
             <h3>
               {moment(item.day_millis).format("ll")} ||{" "}
               {this.StringFromTime(item.time_millis)}
@@ -263,7 +263,7 @@ class Allappointment extends React.Component {
                   <p className='content'><b>Patient Name</b> </p>
                   <p className='content'>{item.consultant.name}</p>
                 </div>
-                {/* <Link
+                <Link
                   to={{
                     pathname: "/Reports",
                     Data: { item },
@@ -271,15 +271,26 @@ class Allappointment extends React.Component {
                   className="MarginTop11"
                 >
                   <button className='reportscss'>
-                    <b> View Reports</b>
+                    <b> View Reports <i class="far fa-eye"></i> </b>
                   </button>
-                </Link> */}
+                </Link>
 
+                <div
+                  className="MarginTop11"
+                >
+                  <button
+                    onClick={() => this.joinConversationPressed(item)}
 
-                <Link
+                    className='consultationcss'
+                  >
+                    <b> Start Consultation <i class="fas fa-video"></i></b>
+                  </button>
+                </div>
+
+                {/* <Link
                   to={{
-                    pathname: "/Prescription",
-                    Data: { item },
+                    pathname: "/EnableX",
+                    Enx: { item },
                   }}
                   className="MarginTop11"
                 >
@@ -290,7 +301,7 @@ class Allappointment extends React.Component {
                   >
                     <b> Start Consultation <i class="fas fa-video"></i></b>
                   </button>
-                </Link>
+                </Link> */}
 
                 <Link
                   to={{
@@ -321,7 +332,7 @@ class Allappointment extends React.Component {
                   <button
                     className='reportscss'
                   >
-                    <b> View Reports</b>
+                    <b> View Reports <i class="far fa-eye"></i></b>
                   </button>
                 </Link>
 
@@ -338,12 +349,12 @@ class Allappointment extends React.Component {
                 </Link>
 
               </div>}
-            {item.status == "booked" ?
+            {/* {item.status == "booked" ?
               <div className="alltransation">
                 <Link to="/ndhmReport"> <button className='requestbtn'><i class="far fa-eye"></i> View Health Records</button> </Link>
                 <Link to="/Consent"> <button className='requestbtn'> <i class="fas fa-angle-double-up"></i> Raise Consent for Records</button> </Link>
               </div>
-              : null}
+              : null} */}
           </div>
         );
       })

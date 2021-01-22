@@ -46,10 +46,10 @@
 .purposecss {
   width: 4em;
 }
-.datepicker{
+.datepicker {
   border-width: 0px;
   border-bottom: 1px solid cornflowerblue;
-  background-color: rgb(22, 115, 190, 0);;
+  background-color: rgb(22, 115, 190, 0);
 }
 .datepiccss {
   background-color: rgb(22, 115, 190, 0);
@@ -208,6 +208,9 @@ select:focus {
 .row {
   display: flex;
   flex-direction: row;
+}
+.selectOption {
+  display: flex;
 }
 .filtercss {
   background-color: rgb(22, 115, 190, 0);
@@ -811,19 +814,18 @@ form {
 .adddept input,
 .login input {
   width: 70%;
-  height: 40px;
+  height: 35px;
   border-radius: 4px;
   border: 1px solid #ccc;
-  margin-top: 5px;
+  margin-top: 1px;
   padding: 5px;
 }
 .adddept select {
-  width: 50%;
-  height: 40px;
+  width: 70%;
+  height: 35px;
   border-radius: 4px;
-  margin-left: 3em;
   border: 1px solid #ccc;
-  margin-top: 5px;
+  margin-top: 1px;
   padding: 5px;
 }
 .updatehosp input {
@@ -1237,13 +1239,18 @@ form {
   text-decoration: none;
 }
 
-.maintrans {
+.bookingCard {
   background-color: #ffff;
   border-radius: 10px;
   box-shadow: 5px 2px 6px #ccc;
   margin: 4px;
   padding: 5px;
 }
+
+.maintrans {
+  padding: 5px;
+}
+
 .maintrans h3 {
   font-size: 16px;
 }
@@ -1256,7 +1263,6 @@ form {
 .alltransation1 {
   display: flex;
   background-color: #ffff;
-  margin: 4px;
   border-radius: 10px;
   box-shadow: 5px 2px 6px #ccc;
 }
@@ -1452,7 +1458,7 @@ section.login form {
 }
 .consultationcss {
   border-color: white;
-  width: 25vw;
+  width: 15vw;
   height: 3em;
   border-radius: 0.5em;
   color: white;
@@ -1671,19 +1677,12 @@ header .icon {
   .maintrans {
     border: 1px solid blue;
   }
+  .bookingCard {
+    border: 1px solid blue;
+  }
   .alltransation {
     display: flex;
     flex-direction: column;
-  }
-  .alltransation1 {
-    border: 1px solid blue;
-    display: flex;
-    background-color: #ffff;
-    margin: 4px;
-    border-radius: 10px;
-    box-shadow: 5px 2px 6px #ccc;
-    display: flex;
-    flex-direction: row;
   }
 
   header ul li:last-child {
